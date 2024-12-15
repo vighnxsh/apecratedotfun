@@ -1,0 +1,59 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  // relationMode = "prisma"
+}
+generator client {
+  provider = "prisma-client-js"
+}
+enum VoteType {
+  UP
+  DOWN
+}
+model User {
+  walletAddress    String   @unique
+  image            String?
+  emailVerified    Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  crates           Crate[]
+  votes            Vote[]
+}
+
+model Crate {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tokens    Token[]
+  totalCost Float
+  creator   User     @relation(fields: [creatorPA], references: [walletAddress])
+  creatorPA  String
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+  votes     Vote[]
+  @@index([name])
+}
+model Token {
+  id        String   @id @default(cuid())
+  symbol    String
+  name      String
+  quantity  Int
+  coingeckoId String?  
+  createdAt DateTime @default(now())
+  crateId   String
+  crate     Crate    @relation(fields: [crateId], references: [id], onDelete: Cascade)
+  @@index([symbol])
+}
+
+model Vote {
+  id      String   @id @default(uuid())
+  type    VoteType
+  user    User     @relation(fields: [userId], references: [walletAddress])
+  userId  String
+  crate   Crate    @relation(fields: [crateId], references: [id])
+  crateId String
+  @@unique([userId, crateId])
+}

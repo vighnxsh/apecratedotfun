@@ -1,6 +1,6 @@
-import type { Config } from "tailwindcss";
+"use strict";Object.defineProperty(exports, "__esModule", {value: true});
 
-const config: Config = {
+const config = {
     darkMode: ["class"],
     content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -60,4 +60,5 @@ const config: Config = {
   },
   plugins: [require("tailwindcss-animate")],
 };
-export default config;
+exports. default = config;
+ /* v7-6f4f8725180f5da8 */
